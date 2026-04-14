@@ -1,15 +1,22 @@
-import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
-// Replace this with your actual Firebase configuration
+// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyDbl2GlBosoBB4_xo7BdvJTHlOSoJ7AjT4",
+  authDomain: "adc-portal-29fb3.firebaseapp.com",
+  projectId: "adc-portal-29fb3",
+  storageBucket: "adc-portal-29fb3.firebasestorage.app",
+  messagingSenderId: "206138284974",
+  appId: "1:206138284974:web:944f4d5147e7743fce463f"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
+// Initialize Firestore
 export const db = getFirestore(app);
+export const auth = getAuth(app);
+
+console.log('Firebase Handshake Successful!');
