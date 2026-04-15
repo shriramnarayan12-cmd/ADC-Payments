@@ -291,16 +291,20 @@ export default function App() {
               )}
             </div>
 
-            {/* QR Code Placeholder */}
-            <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 flex flex-col items-center justify-center bg-gray-50">
-              <QrCode className="h-12 w-12 text-gray-400 mb-3" />
-              <p className="text-sm font-medium text-gray-500 tracking-widest text-center">
-                [ ADC BANK QR CODE WILL GO HERE ]
-              </p>
-              <p className="text-xs text-gray-400 mt-2 text-center">
-                Scan to pay via any UPI app
-              </p>
-            </div>
+            {/* Abhinava Dance Company Official QR Code */}
+<div className="border border-gray-200 rounded-xl p-6 flex flex-col items-center justify-center bg-white shadow-sm my-6">
+  <img 
+    src="/adc-qr.png" 
+    alt="Abhinava Dance Company UPI QR Code" 
+    className="w-48 h-48 object-contain mb-3"
+  />
+  <p className="text-sm font-bold text-gray-800 text-center">
+    Scan to pay via any UPI app
+  </p>
+  <p className="text-xs text-gray-500 mt-1 text-center">
+    GPay, PhonePe, Paytm, etc.
+  </p>
+</div>
 
             {/* Transaction ID Input */}
             <div>
