@@ -115,10 +115,21 @@ export default function App() {
   const calculatedAmount = useMemo(() => {
     if (!formData.batch_name || !selectedStudent) return 0;
     
+    // 1. Calculate their standard bill
     const baseFee = batchFees[formData.batch_name] || 0;
     const multiplier = selectedStudent.payment_frequency === 'Quarterly' ? 3 : 1;
+    let finalTotal = baseFee * multiplier;
     
-    return baseFee * multiplier;
+    // 2. Check the current date and add the flat late fee
+    const currentDay = new Date().getDate();
+    
+    if (currentDay > 15) {
+      finalTotal += 750;
+    } else if (currentDay >= 5) {
+      finalTotal += 500;
+    }
+    
+    return finalTotal;
   }, [formData.batch_name, selectedStudent, batchFees]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
