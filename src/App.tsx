@@ -118,7 +118,17 @@ export default function App() {
     
     // 1. Calculate their standard bill
     const baseFee = batchFees[formData.batch_name] || 0;
-    const multiplier = selectedStudent.payment_frequency === 'Quarterly' ? 3 : 1;
+    
+    // Determine the multiplier based on frequency and period
+    let multiplier = 1; 
+    if (selectedStudent.payment_frequency === 'Quarterly') {
+      if (formData.period === 'March') {
+        multiplier = 1; // Only charge for 1 month
+      } else {
+        multiplier = 3; // Standard 3-month quarterly charge
+      }
+    }
+    
     let finalTotal = baseFee * multiplier;
     
     // 2. Check the current date and add the flat late fee
@@ -131,7 +141,7 @@ export default function App() {
     }
     
     return finalTotal;
-  }, [formData.batch_name, selectedStudent, batchFees]);
+  }, [formData.batch_name, selectedStudent, batchFees, formData.period]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -208,7 +218,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8 font-sans">
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8 font-sans print:hidden">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden">
         {/* Header */}
         <div className="bg-blue-600 px-6 py-8 text-center">
@@ -390,8 +400,8 @@ export default function App() {
 
       {/* RECEIPT MODAL OVERLAY */}
       {receiptData && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-in fade-in zoom-in duration-200">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 print:static print:bg-transparent print:p-0">
+          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300 print:shadow-none print:w-full print:max-w-none">
             {/* Modal Header */}
             <div className="bg-green-600 px-6 py-5 text-center relative">
               <button 
@@ -440,7 +450,7 @@ export default function App() {
             </div>
             
             {/* Modal Actions */}
-            <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex gap-3">
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex gap-3 print:hidden">
               <button
                 onClick={() => window.print()}
                 className="flex-1 bg-white border border-gray-300 text-gray-700 py-2.5 rounded-lg font-medium hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
