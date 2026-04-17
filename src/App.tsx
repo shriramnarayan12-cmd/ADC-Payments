@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
 import { db } from './firebase';
-import { CreditCard, QrCode, CheckCircle2, AlertCircle } from 'lucide-react';
+import { CreditCard, QrCode, CheckCircle2, AlertCircle, X } from 'lucide-react';
 
 interface Student {
   id: string;
@@ -37,6 +37,7 @@ export default function App() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [receiptData, setReceiptData] = useState<any>(null);
 
   // Step 1: Initial Load
   useEffect(() => {
@@ -167,13 +168,26 @@ export default function App() {
       });
 
       setSuccess(true);
+      
+      // Save data for the premium receipt popup
+      setReceiptData({
+        student_name: selectedStudent.name,
+        reg_no: formData.reg_no,
+        batch_name: formData.batch_name,
+        period: formData.period,
+        amount: calculatedAmount,
+        txn_id: formData.txn_id,
+        date: new Date().toLocaleString('en-IN')
+      });
+
       setFormData({
         batch_name: '',
         reg_no: '',
         period: '',
         txn_id: ''
       });
-      alert("Payment Submitted Successfully!");
+      // (Alert removed so it doesn't block the new visual receipt)
+
     } catch (err) {
       console.error("Error submitting payment:", err);
       setError("Failed to submit payment. Please try again.");
@@ -371,8 +385,82 @@ export default function App() {
       </div>
       
       <p className="text-xs text-gray-400 mt-8 text-center max-w-xs">
-        By submitting this form, you confirm that the payment has been successfully completed via UPI.
+        Secure SSL encrypted connection. Powered by Stripe & Firebase.
       </p>
+
+      {/* RECEIPT MODAL OVERLAY */}
+      {receiptData && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-in fade-in zoom-in duration-200">
+            {/* Modal Header */}
+            <div className="bg-green-600 px-6 py-5 text-center relative">
+              <button 
+                onClick={() => setReceiptData(null)}
+                className="absolute top-4 right-4 text-white/80 hover:text-white focus:outline-none"
+              >
+                <X className="h-6 w-6" />
+              </button>
+              <div className="mx-auto bg-white/20 h-14 w-14 rounded-full flex items-center justify-center mb-3">
+                <CheckCircle2 className="h-8 w-8 text-white" />
+              </div>
+              <h2 className="text-xl font-bold text-white tracking-wide">Payment Successful!</h2>
+              <p className="text-green-100 mt-1 text-sm font-medium">Abhinava Dance School</p>
+            </div>
+            
+            {/* Modal Body / Receipt Details */}
+            <div className="p-6 space-y-4">
+              <div className="flex justify-between border-b border-gray-100 pb-3">
+                <span className="text-gray-500">Student</span>
+                <span className="font-medium text-gray-900">{receiptData.student_name}</span>
+              </div>
+              <div className="flex justify-between border-b border-gray-100 pb-3">
+                <span className="text-gray-500">Reg No</span>
+                <span className="font-medium text-gray-900">{receiptData.reg_no}</span>
+              </div>
+              <div className="flex justify-between border-b border-gray-100 pb-3">
+                <span className="text-gray-500">Batch</span>
+                <span className="font-medium text-gray-900">{receiptData.batch_name}</span>
+              </div>
+              <div className="flex justify-between border-b border-gray-100 pb-3">
+                <span className="text-gray-500">Period</span>
+                <span className="font-medium text-gray-900">{receiptData.period}</span>
+              </div>
+              <div className="flex justify-between border-b border-gray-100 pb-3">
+                <span className="text-gray-500">Txn ID</span>
+                <span className="font-medium text-gray-900 uppercase">{receiptData.txn_id}</span>
+              </div>
+              <div className="flex justify-between border-b border-gray-100 pb-3">
+                <span className="text-gray-500">Date</span>
+                <span className="font-medium text-gray-900 text-sm">{receiptData.date}</span>
+              </div>
+              <div className="flex justify-between pt-2 items-center">
+                <span className="text-gray-600 font-bold uppercase tracking-wider text-sm">Total Paid</span>
+                <span className="text-2xl font-bold text-blue-600">₹{receiptData.amount.toLocaleString('en-IN')}</span>
+              </div>
+            </div>
+            
+            {/* Modal Actions */}
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex gap-3">
+              <button
+                onClick={() => window.print()}
+                className="flex-1 bg-white border border-gray-300 text-gray-700 py-2.5 rounded-lg font-medium hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
+              >
+                Print
+              </button>
+              <button
+                onClick={() => {
+                  setReceiptData(null);
+                  setSuccess(false); 
+                }}
+                className="flex-1 bg-blue-600 text-white py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
