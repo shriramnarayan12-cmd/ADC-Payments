@@ -19,7 +19,7 @@ interface FormData {
 }
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const QUARTERS = ['Q1', 'Q2', 'Q3', 'Q4'];
+const QUARTERS = ['June/Jul/Aug', 'Sep/Oct/Nov', 'Dec/Jan/Feb', 'March'];
 
 export default function App() {
   const [batches, setBatches] = useState<string[]>([]);
