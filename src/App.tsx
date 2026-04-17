@@ -218,8 +218,8 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8 font-sans print:hidden">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden">
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8 font-sans print:py-0 print:bg-white">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden print:hidden">
         {/* Header */}
         <div className="bg-blue-600 px-6 py-8 text-center">
           <div className="mx-auto bg-white/20 h-16 w-16 rounded-full flex items-center justify-center mb-4">
@@ -401,7 +401,7 @@ export default function App() {
       {/* RECEIPT MODAL OVERLAY */}
       {receiptData && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 print:static print:bg-transparent print:p-0">
-          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300 print:shadow-none print:w-full print:max-w-none">
+         <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300 print:shadow-none print:w-full print:max-w-none">
             {/* Modal Header */}
             <div className="bg-green-600 px-6 py-5 text-center relative">
               <button 
