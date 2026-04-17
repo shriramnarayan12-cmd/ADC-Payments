@@ -394,9 +394,9 @@ export default function App() {
         </div>
       </div>
       
-      <p className="text-xs text-gray-400 mt-8 text-center max-w-xs">
-        Secure SSL encrypted connection. Powered by Stripe & Firebase.
-      </p>
+     <p className="text-xs text-gray-400 mt-8 text-center max-w-xs print:hidden">
+  Secure SSL encrypted connection. Powered by Stripe & Firebase.
+</p>
 
       {/* RECEIPT MODAL OVERLAY */}
       {receiptData && (
