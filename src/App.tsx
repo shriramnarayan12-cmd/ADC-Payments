@@ -356,11 +356,11 @@ export default function App() {
               {/* Account Details Section */}
               <div className="mt-3 p-3 bg-white rounded border border-blue-200 text-left text-xs text-blue-900 space-y-1.5">
                 <p className="font-bold text-sm mb-1 text-blue-950 border-b border-blue-100 pb-1">Account Details</p>
-                <p className="select-all"><span className="font-semibold text-gray-600">Name:</span> T.D Rajendra</p>
-                <p className="select-all"><span className="font-semibold text-gray-600">Acc Num:</span> 54055481291</p>
-                <p className="select-all"><span className="font-semibold text-gray-600">IFSC Code:</span> SBIN0040014</p>
-                <p className="select-all"><span className="font-semibold text-gray-600">Type of Account:</span> Savings</p>
-                <p className="select-all"><span className="font-semibold text-gray-600">UPI Id:</span> tdrajendra@upi</p>
+                <p><span className="font-semibold text-gray-600">Name:</span> T.D Rajendra</p>
+                <p><span className="font-semibold text-gray-600">Acc Num:</span> 54055481291</p>
+                <p><span className="font-semibold text-gray-600">IFSC Code:</span> SBIN0040014</p>
+                <p><span className="font-semibold text-gray-600">Type of Account:</span> Savings</p>
+                <p><span className="font-semibold text-gray-600">UPI Id:</span> tdrajendra@upi</p>
               </div>
             </div>
             </div>
