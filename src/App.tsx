@@ -344,15 +344,25 @@ export default function App() {
               </a>
 
               {/* Instructions */}
-              <div className="bg-blue-50 rounded-lg p-4 w-full border border-blue-100">
-                <p className="text-sm font-bold text-blue-900 mb-2">How to Pay:</p>
-                <ol className="text-xs text-blue-800 space-y-1.5 list-decimal list-inside text-left">
-                  <li>Tap the <strong>Blue button</strong> above to save the QR.</li>
-                  <li>Open <strong>GPay</strong> or <strong>PhonePe</strong>.</li>
-                  <li>Choose <strong>"Scan Any QR"</strong>.</li>
-                  <li>Tap the <strong>Gallery/Image icon</strong> and select the QR you just saved.</li>
-                </ol>
+            <div className="bg-blue-50 rounded-lg p-4 w-full border border-blue-100">
+              <p className="text-sm font-bold text-blue-900 mb-2">How to Pay:</p>
+              <ol className="text-xs text-blue-800 space-y-1.5 list-decimal list-inside text-left mb-4">
+                <li>Tap the <strong>Blue button</strong> above to save the QR.</li>
+                <li>Open <strong>GPay</strong> or <strong>PhonePe</strong>.</li>
+                <li>Choose <strong>"Scan Any QR"</strong>.</li>
+                <li>Tap the <strong>Gallery/Image icon</strong> and select the QR you just saved.</li>
+              </ol>
+              
+              {/* Account Details Section */}
+              <div className="mt-3 p-3 bg-white rounded border border-blue-200 text-left text-xs text-blue-900 space-y-1.5">
+                <p className="font-bold text-sm mb-1 text-blue-950 border-b border-blue-100 pb-1">Account Details</p>
+                <p className="select-all"><span className="font-semibold text-gray-600">Name:</span> T.D Rajendra</p>
+                <p className="select-all"><span className="font-semibold text-gray-600">Acc Num:</span> 54055481291</p>
+                <p className="select-all"><span className="font-semibold text-gray-600">IFSC Code:</span> SBIN0040014</p>
+                <p className="select-all"><span className="font-semibold text-gray-600">Type of Account:</span> Savings</p>
+                <p className="select-all"><span className="font-semibold text-gray-600">UPI Id:</span> tdrajendra@upi</p>
               </div>
+            </div>
             </div>
             {/* Transaction ID Input */}
             <div>
