@@ -113,13 +113,12 @@ export default function App() {
     return students.find(s => s.reg_no === formData.reg_no);
   }, [students, formData.reg_no]);
 
-  const calculatedAmount = useMemo(() => {
-    if (!formData.batch_name || !selectedStudent) return 0;
+  const feeCalculation = useMemo(() => {
+    if (!formData.batch_name || !selectedStudent) return { amount: 0, blocked: false, message: '' };
     
     // 1. Calculate their standard bill
     const baseFee = batchFees[formData.batch_name] || 0;
     
-    // Determine the multiplier based on frequency and period
     let multiplier = 1; 
     if (selectedStudent.payment_frequency === 'Quarterly') {
       if (formData.period === 'March') {
@@ -131,17 +130,33 @@ export default function App() {
     
     let finalTotal = baseFee * multiplier;
     
-    // 2. Check the current date and add the flat late fee
+    // 2. Check the current date and apply Anand sir's specific fine rules
     const currentDay = new Date().getDate();
+    let blocked = false;
+    let message = '';
     
-    if (currentDay > 15) {
-      finalTotal += 750;
-    } else if (currentDay >= 5) {
-      finalTotal += 500;
+    if (selectedStudent.payment_frequency === 'Quarterly') {
+      // Quarterly Fine Rules
+      if (currentDay >= 22) {
+        finalTotal += 750;
+      } else if (currentDay >= 16) {
+        finalTotal += 500;
+      }
+    } else if (selectedStudent.payment_frequency === 'Monthly') {
+      // Monthly Fine Rules
+      if (currentDay >= 9) {
+        blocked = true;
+        message = "Payment restricted. The deadline for monthly fee payment has passed. Please connect with your faculty.";
+      } else if (currentDay >= 6) {
+        finalTotal += 500;
+      }
     }
     
-    return finalTotal;
+    return { amount: finalTotal, blocked, message };
   }, [formData.batch_name, selectedStudent, batchFees, formData.period]);
+
+  // Keep this variable so we don't break the rest of your app!
+  const calculatedAmount = feeCalculation.amount;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -314,17 +329,25 @@ export default function App() {
             </div>
 
             {/* Amount Due Display */}
-            <div className="bg-blue-50 rounded-xl p-6 border border-blue-100 text-center my-6">
-              <p className="text-sm font-medium text-blue-800 mb-1 uppercase tracking-wider">Amount Due</p>
-              <p className="text-4xl font-bold text-blue-900">
-                ₹{calculatedAmount.toLocaleString('en-IN')}
-              </p>
-              {selectedStudent && (
-                <p className="text-xs text-blue-600 mt-2">
-                  Based on {selectedStudent.payment_frequency} frequency
+            {feeCalculation.blocked ? (
+              <div className="bg-red-50 rounded-xl p-6 border border-red-200 text-center my-6 shadow-sm">
+                <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
+                <p className="text-base font-bold text-red-800 mb-1">Payment Blocked</p>
+                <p className="text-sm text-red-600 font-medium">{feeCalculation.message}</p>
+              </div>
+            ) : (
+              <div className="bg-blue-50 rounded-xl p-6 border border-blue-100 text-center my-6">
+                <p className="text-sm font-medium text-blue-800 mb-1 uppercase tracking-wider">Amount Due</p>
+                <p className="text-4xl font-bold text-blue-900">
+                  ₹{calculatedAmount.toLocaleString('en-IN')}
                 </p>
-              )}
-            </div>
+                {selectedStudent && (
+                  <p className="text-xs text-blue-600 mt-2">
+                    Based on {selectedStudent.payment_frequency} frequency
+                  </p>
+                )}
+              </div>
+            )}
 
             {/* Abhinava Dance Company Official QR Code & Instructions */}
             <div className="border border-gray-200 rounded-xl p-6 flex flex-col items-center justify-center bg-white shadow-sm my-6">
@@ -388,7 +411,7 @@ export default function App() {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={submitting || !calculatedAmount}
+              disabled={submitting || !calculatedAmount || feeCalculation.blocked}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed mt-4 flex justify-center items-center"
             >
               {submitting ? (
