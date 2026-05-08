@@ -401,72 +401,77 @@ export default function App() {
               </div>
             )}
 
-            {/* DYNAMIC QR CODE & INSTRUCTIONS */}
-            <div className="border border-gray-200 rounded-xl p-6 flex flex-col items-center justify-center bg-white shadow-sm my-6">
-              <h2 className="text-lg font-bold text-gray-800 mb-4 text-center">Payment Details</h2>
+            {/* --- PAYMENT SECTION (HIDDEN IF BLOCKED) --- */}
+            {!feeCalculation.blocked && (
+              <>
+                {/* DYNAMIC QR CODE & INSTRUCTIONS */}
+                <div className="border border-gray-200 rounded-xl p-6 flex flex-col items-center justify-center bg-white shadow-sm my-6">
+                  <h2 className="text-lg font-bold text-gray-800 mb-4 text-center">Payment Details</h2>
 
-              {!activeAccount ? (
-                <div className="bg-blue-50 border border-blue-200 text-blue-800 p-4 rounded-lg w-full text-center text-sm shadow-sm">
-                  Please select a <strong>Batch Name</strong> above to view the correct payment QR code and account details.
-                </div>
-              ) : (
-                <>
-                  <img 
-                    src={activeAccount.qrBase64} 
-                    alt={`${activeAccount.name} QR Code`} 
-                    className="w-48 h-48 object-contain mb-4 border-4 border-gray-50 rounded-lg p-2 bg-white"
-                  />
-                  
-                  <a 
-                    href={activeAccount.qrBase64} 
-                    download={activeAccount.fileName}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg shadow-sm transition-colors mb-6 text-sm text-center w-full max-w-xs"
-                  >
-                    Download QR to Gallery
-                  </a>
-
-                  <div className="bg-blue-50 rounded-lg p-4 w-full border border-blue-100">
-                    <p className="text-sm font-bold text-blue-900 mb-2">How to Pay:</p>
-                    <ol className="text-xs text-blue-800 space-y-1.5 list-decimal list-inside text-left mb-4">
-                      <li>Tap the <strong>Blue button</strong> above to save the QR.</li>
-                      <li>Open <strong>GPay</strong> or <strong>PhonePe</strong>.</li>
-                      <li>Choose <strong>"Scan Any QR"</strong>.</li>
-                      <li>Tap the <strong>Gallery/Image icon</strong> and select the QR you just saved.</li>
-                    </ol>
-                    
-                    <div className="mt-3 p-3 bg-white rounded border border-blue-200 text-left text-xs text-blue-900 space-y-1.5">
-                      <p className="font-bold text-sm mb-1 text-blue-950 border-b border-blue-100 pb-1">Account Details</p>
-                      <p><span className="font-semibold text-gray-600">Name:</span> {activeAccount.name}</p>
-                      <p><span className="font-semibold text-gray-600">Acc Num:</span> {activeAccount.accNum}</p>
-                      <p><span className="font-semibold text-gray-600">IFSC Code:</span> {activeAccount.ifsc}</p>
-                      <p><span className="font-semibold text-gray-600">Type of Account:</span> {activeAccount.type}</p>
-                      <p><span className="font-semibold text-gray-600">UPI Id:</span> {activeAccount.upi}</p>
+                  {!activeAccount ? (
+                    <div className="bg-blue-50 border border-blue-200 text-blue-800 p-4 rounded-lg w-full text-center text-sm shadow-sm">
+                      Please select a <strong>Batch Name</strong> above to view the correct payment QR code and account details.
                     </div>
-                  </div>
-                </>
-              )}
-            </div>
+                  ) : (
+                    <>
+                      <img 
+                        src={activeAccount.qrBase64} 
+                        alt={`${activeAccount.name} QR Code`} 
+                        className="w-48 h-48 object-contain mb-4 border-4 border-gray-50 rounded-lg p-2 bg-white"
+                      />
+                      
+                      <a 
+                        href={activeAccount.qrBase64} 
+                        download={activeAccount.fileName}
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg shadow-sm transition-colors mb-6 text-sm text-center w-full max-w-xs"
+                      >
+                        Download QR to Gallery
+                      </a>
 
-            {/* Transaction ID Input */}
-            <div>
-              <label htmlFor="txn_id" className="block text-sm font-medium text-gray-700 mb-1">
-                UPI Transaction ID
-              </label>
-              <input
-                type="text"
-                id="txn_id"
-                name="txn_id"
-                value={formData.txn_id}
-                onChange={handleInputChange}
-                placeholder="e.g. 123456789012"
-                maxLength={12}
-                minLength={12}
-                pattern="\d{12}"
-                title="UPI Transaction ID must be exactly 12 digits"
-                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors"
-                required
-              />
-            </div>
+                      <div className="bg-blue-50 rounded-lg p-4 w-full border border-blue-100">
+                        <p className="text-sm font-bold text-blue-900 mb-2">How to Pay:</p>
+                        <ol className="text-xs text-blue-800 space-y-1.5 list-decimal list-inside text-left mb-4">
+                          <li>Tap the <strong>Blue button</strong> above to save the QR.</li>
+                          <li>Open <strong>GPay</strong> or <strong>PhonePe</strong>.</li>
+                          <li>Choose <strong>"Scan Any QR"</strong>.</li>
+                          <li>Tap the <strong>Gallery/Image icon</strong> and select the QR you just saved.</li>
+                        </ol>
+                        
+                        <div className="mt-3 p-3 bg-white rounded border border-blue-200 text-left text-xs text-blue-900 space-y-1.5">
+                          <p className="font-bold text-sm mb-1 text-blue-950 border-b border-blue-100 pb-1">Account Details</p>
+                          <p><span className="font-semibold text-gray-600">Name:</span> {activeAccount.name}</p>
+                          <p><span className="font-semibold text-gray-600">Acc Num:</span> {activeAccount.accNum}</p>
+                          <p><span className="font-semibold text-gray-600">IFSC Code:</span> {activeAccount.ifsc}</p>
+                          <p><span className="font-semibold text-gray-600">Type of Account:</span> {activeAccount.type}</p>
+                          <p><span className="font-semibold text-gray-600">UPI Id:</span> {activeAccount.upi}</p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* Transaction ID Input */}
+                <div>
+                  <label htmlFor="txn_id" className="block text-sm font-medium text-gray-700 mb-1">
+                    UPI Transaction ID
+                  </label>
+                  <input
+                    type="text"
+                    id="txn_id"
+                    name="txn_id"
+                    value={formData.txn_id}
+                    onChange={handleInputChange}
+                    placeholder="e.g. 123456789012"
+                    maxLength={12}
+                    minLength={12}
+                    pattern="\d{12}"
+                    title="UPI Transaction ID must be exactly 12 digits"
+                    className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors"
+                    required
+                  />
+                </div>
+              </>
+            )}
 
             <button
               type="submit"
