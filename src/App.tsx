@@ -33,7 +33,7 @@ const ACCOUNT_NR = {
   accNum: "540 2128 4464",
   ifsc: "SBIN0040014",
   type: "Savings",
-  upi: "nirupamarajendra-1@upi"
+  upi: "nirupamarajendra-1@oksbi"
 };
 
 // 2. TDR ACCOUNT DETAILS
@@ -44,7 +44,7 @@ const ACCOUNT_TDR = {
   accNum: "54055481291",
   ifsc: "SBIN0040014",
   type: "Savings",
-  upi: "tdrajendra@upi"
+  upi: "nirupamarajendra@oksbi"
 };
 
 // 3. BATCH TO ACCOUNT MAPPING
