@@ -198,10 +198,10 @@ export default function App() {
         finalTotal += 500;
       }
     } else if (selectedStudent.payment_frequency === 'Monthly') {
-      if (currentDay >= 9) {
+      if (currentDay >= 6) {
         blocked = true;
         message = "Payment restricted. The deadline for monthly fee payment has passed. Please connect with your faculty.";
-      } else if (currentDay >= 6) {
+      } else if (currentDay >= 3) {
         finalTotal += 500;
       }
     }
