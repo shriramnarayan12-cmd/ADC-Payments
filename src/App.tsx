@@ -167,12 +167,41 @@ export default function App() {
     return students.find(s => s.reg_no === formData.reg_no);
   }, [students, formData.reg_no]);
 
+  // --- NEW: DYNAMIC PERIOD LOGIC ---
+  const availablePeriods = useMemo(() => {
+    if (!selectedStudent) return [];
+    const monthIndex = new Date().getMonth(); // 0 = Jan, 1 = Feb, 2 = Mar, 3 = Apr, 4 = May, etc.
+    
+    // School is closed in April (3) and May (4)
+    if (monthIndex === 3 || monthIndex === 4) return [];
+    
+    if (selectedStudent.payment_frequency === 'Monthly') {
+      return [MONTHS[monthIndex]];
+    } else {
+      // Quarterly logic mapped by current calendar month
+      if (monthIndex >= 5 && monthIndex <= 7) return ['June/Jul/Aug'];
+      if (monthIndex >= 8 && monthIndex <= 10) return ['Sep/Oct/Nov'];
+      if (monthIndex === 11 || monthIndex === 0 || monthIndex === 1) return ['Dec/Jan/Feb'];
+      if (monthIndex === 2) return ['March'];
+      return [];
+    }
+  }, [selectedStudent]);
+
+  // Auto-select the current period so parents don't even have to click it
+  useEffect(() => {
+    if (availablePeriods.length === 1) {
+      setFormData(prev => ({ ...prev, period: availablePeriods[0] }));
+    } else if (availablePeriods.length === 0) {
+      setFormData(prev => ({ ...prev, period: '' }));
+    }
+  }, [availablePeriods]);
+
   // Determine which account details to show based on selected batch
   const activeAccount = formData.batch_name ? (BATCH_PAYMENT_MAP[formData.batch_name] || ACCOUNT_TDR) : null;
 
-  // --- UNTOUCHED FEE CALCULATION LOGIC ---
+  // --- UPDATED FEE CALCULATION LOGIC ---
   const feeCalculation = useMemo(() => {
-    if (!formData.batch_name || !selectedStudent) return { amount: 0, blocked: false, message: '' };
+    if (!formData.batch_name || !selectedStudent || !formData.period) return { amount: 0, blocked: false, message: '' };
     
     const baseFee = batchFees[formData.batch_name] || 0;
     
@@ -191,17 +220,21 @@ export default function App() {
     let blocked = false;
     let message = '';
     
-    if (selectedStudent.payment_frequency === 'Quarterly') {
+    // Check if it's a Quarterly student paying for the special March month
+    const isQuarterlyMarch = selectedStudent.payment_frequency === 'Quarterly' && formData.period === 'March';
+    
+    // March applies the Monthly fine logic
+    if (selectedStudent.payment_frequency === 'Monthly' || isQuarterlyMarch) {
+      if (currentDay >= 9) {
+        blocked = true;
+        message = "Payment restricted. The deadline for this fee payment has passed. Please contact the school directly to clear past dues.";
+      } else if (currentDay >= 6) {
+        finalTotal += 500;
+      }
+    } else if (selectedStudent.payment_frequency === 'Quarterly') {
       if (currentDay >= 22) {
         finalTotal += 750;
       } else if (currentDay >= 16) {
-        finalTotal += 500;
-      }
-    } else if (selectedStudent.payment_frequency === 'Monthly') {
-      if (currentDay >= 9) {
-        blocked = true;
-        message = "Payment restricted. The deadline for monthly fee payment has passed. Please connect with your faculty.";
-      } else if (currentDay >= 6) {
         finalTotal += 500;
       }
     }
@@ -368,18 +401,17 @@ export default function App() {
                 name="period"
                 value={formData.period}
                 onChange={handleInputChange}
-                disabled={!selectedStudent}
+                disabled={!selectedStudent || availablePeriods.length === 0}
                 className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors disabled:bg-gray-100 disabled:text-gray-500"
                 required
               >
                 <option value="">-- Select Period --</option>
-                {selectedStudent?.payment_frequency === 'Quarterly' 
-                  ? QUARTERS.map(q => <option key={q} value={q}>{q}</option>)
-                  : MONTHS.map(m => <option key={m} value={m}>{m}</option>)
-                }
+                {availablePeriods.map(p => <option key={p} value={p}>{p}</option>)}
               </select>
+              {selectedStudent && availablePeriods.length === 0 && (
+                <p className="text-xs text-red-600 mt-1.5 font-medium">School is closed in April and May. No online payments required.</p>
+              )}
             </div>
-
             {/* Amount Due Display */}
             {feeCalculation.blocked ? (
               <div className="bg-red-50 rounded-xl p-6 border border-red-200 text-center my-6 shadow-sm">
