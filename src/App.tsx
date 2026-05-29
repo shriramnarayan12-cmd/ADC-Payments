@@ -175,7 +175,7 @@ export default function App() {
   // --- NEW: DYNAMIC PERIOD LOGIC ---
   const availablePeriods = useMemo(() => {
     if (!selectedStudent) return [];
-    const monthIndex = 5 // 0 = Jan, 1 = Feb, 2 = Mar, 3 = Apr, 4 = May, etc.
+    const monthIndex = new Date().getMonth(); // 0 = Jan, 1 = Feb, 2 = Mar, 3 = Apr, 4 = May, etc.
     
     // School is closed in April (3) and May (4)
     if (monthIndex === 3 || monthIndex === 4) return [];
