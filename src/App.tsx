@@ -391,7 +391,7 @@ export default function App() {
                 className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors disabled:bg-gray-100 disabled:text-gray-500"
                 required
               >
-                <option value="">-- Select your child --</option>
+                <option value="">-- Select Student Name --</option>
                 {students.map(student => (
                   <option key={student.reg_no} value={student.reg_no}>
                     {student.name} ({student.reg_no})
