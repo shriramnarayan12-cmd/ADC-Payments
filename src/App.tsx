@@ -9,6 +9,7 @@ interface Student {
   name: string;
   batch_name: string;
   payment_frequency: 'Monthly' | 'Quarterly';
+  isArchived?: boolean;
 }
 
 interface FormData {
@@ -143,13 +144,17 @@ export default function App() {
         
         querySnapshot.forEach((doc) => {
           const data = doc.data();
-          fetchedStudents.push({
-            id: doc.id,
-            reg_no: data.reg_no,
-            name: data.name,
-            batch_name: data.batch_name,
-            payment_frequency: data.payment_frequency || 'Monthly'
-          });
+          // ONLY push the student if they are NOT archived
+          if (data.isArchived !== true) {
+            fetchedStudents.push({
+              id: doc.id,
+              reg_no: data.reg_no,
+              name: data.name,
+              batch_name: data.batch_name,
+              payment_frequency: data.payment_frequency || 'Monthly',
+              isArchived: data.isArchived
+            });
+          }
         });
 
         setStudents(fetchedStudents);
@@ -215,6 +220,13 @@ export default function App() {
     }
     
     let finalTotal = baseFee * multiplier;
+
+    // --- NEW: MAY 50% FEE ADDITION ---
+    // If it is the first payment of the year (June or June/Jul/Aug), add 50% of 1 month's fee to cover May
+    if (formData.period === 'Jun' || formData.period === 'June/Jul/Aug') {
+      finalTotal += Math.round(baseFee * 0.5); 
+    }
+    // ---------------------------------
     
     const currentDay = new Date().getDate();
     let blocked = false;
