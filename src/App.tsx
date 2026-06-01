@@ -221,33 +221,44 @@ export default function App() {
     
     let finalTotal = baseFee * multiplier;
 
-    // --- NEW: MAY 50% FEE ADDITION ---
-    // If it is the first payment of the year (June or June/Jul/Aug), add 50% of 1 month's fee to cover May
+    // --- MAY 50% FEE ADDITION ---
     if (formData.period === 'Jun' || formData.period === 'June/Jul/Aug') {
       finalTotal += Math.round(baseFee * 0.5); 
     }
     // ---------------------------------
     
-    const currentDay = new Date().getDate();
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth(); // 5 = June
+    const currentDay = currentDate.getDate();
+    
     let blocked = false;
     let message = '';
-    
-    // Check if it's a Quarterly student paying for the special March month
-    const isQuarterlyMarch = selectedStudent.payment_frequency === 'Quarterly' && formData.period === 'March';
-    
-    // March applies the Monthly fine logic
-    if (selectedStudent.payment_frequency === 'Monthly' || isQuarterlyMarch) {
-      if (currentDay >= 9) {
-        blocked = true;
-        message = "Payment restricted. The deadline for this fee payment has passed. Please contact the school directly to clear past dues.";
-      } else if (currentDay >= 6) {
+
+    // --- SPECIAL JUNE 2026 LOGIC ---
+    if (currentMonth === 5) {
+      // In June, these rules apply to EVERYONE and no one is blocked
+      if (currentDay >= 26) {
+        finalTotal += 750;
+      } else if (currentDay >= 21) {
         finalTotal += 500;
       }
-    } else if (selectedStudent.payment_frequency === 'Quarterly') {
-      if (currentDay >= 22) {
-        finalTotal += 750;
-      } else if (currentDay >= 16) {
-        finalTotal += 500;
+    } else {
+      // --- STANDARD LOGIC (Runs for July onwards) ---
+      const isQuarterlyMarch = selectedStudent.payment_frequency === 'Quarterly' && formData.period === 'March';
+      
+      if (selectedStudent.payment_frequency === 'Monthly' || isQuarterlyMarch) {
+        if (currentDay >= 9) {
+          blocked = true;
+          message = "Payment restricted. The deadline for this fee payment has passed. Please contact the school directly to clear past dues.";
+        } else if (currentDay >= 6) {
+          finalTotal += 500;
+        }
+      } else if (selectedStudent.payment_frequency === 'Quarterly') {
+        if (currentDay >= 22) {
+          finalTotal += 750;
+        } else if (currentDay >= 16) {
+          finalTotal += 500;
+        }
       }
     }
     
