@@ -33,7 +33,7 @@ const ACCOUNT_NR = {
   name: "NIRUPAMA RAJENDRA",
   accNum: "6254 0502 1338",
   ifsc: "ICIC0006254",
-  type: "Savings",
+  type: "Current",
   upi: "nirupamarajendra-1@oksbi"
 };
 
@@ -44,7 +44,7 @@ const ACCOUNT_TDR = {
   name: "TUMKUR DWARAKANATH RAJENDRA",
   accNum: "6254 0502 1335",
   ifsc: "ICIC0006254",
-  type: "Savings",
+  type: "Current",
   upi: "MRTUMKURDWARAKANATHRAJENDRA.eazypay@icici"
 };
 
