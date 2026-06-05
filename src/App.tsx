@@ -22,6 +22,29 @@ interface FormData {
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const QUARTERS = ['June/Jul/Aug', 'Sep/Oct/Nov', 'Dec/Jan/Feb', 'March'];
 
+// --- BATCHES TO HIDE FROM THIS APP ---
+const EXCLUDED_BATCHES = [
+  // Rajajinagar Batches
+  "TUE-THU 5PM Maanvi",
+  "TUE-THU 6:30PM MAANVI",
+  "TUE-THU 6PM MAANVI ",
+  "SAT-SUN 8:30AM ROHINI",
+  "SAT-SUN 9:30AM ROHINI",
+  "SAT - SUN 7:30AM  ROHINI",
+  "TUE-THU 7:30PM RAJ",
+  // Online Batches
+  "AOB WED 11AM INDU",
+  "AOB WED 10AM INDU",
+  "AOB MON 12PM Medha",
+  "AOB MON 8:30PM Medha",
+  "AOK ROHINI",
+  "AOK WED 8:30PM Maanvi",
+  "AOK FRI 6AM Maanvi",
+  "AOK FRI 8PM Maanvi",
+  "AOK WED 7:30PM Maanvi"
+];
+// -------------------------------------
+
 // ==========================================
 // --- PAYMENT ACCOUNTS CONFIGURATION ---
 // ==========================================
@@ -112,8 +135,11 @@ export default function App() {
           const batchName = data.name || doc.id;
           const baseFee = data.base_fee || data.fee || 0;
           
-          fetchedBatches.push(batchName);
-          fetchedBatchFees[batchName] = Number(baseFee);
+          // ONLY add the batch if it is NOT in our excluded list
+          if (!EXCLUDED_BATCHES.includes(batchName)) {
+            fetchedBatches.push(batchName);
+            fetchedBatchFees[batchName] = Number(baseFee);
+          }
         });
 
         setBatches(fetchedBatches);
