@@ -237,9 +237,9 @@ export default function App() {
     // --- SPECIAL JUNE 2026 LOGIC ---
     if (currentMonth === 5) {
       // In June, these rules apply to EVERYONE and no one is blocked
-      if (currentDay >= 26) {
+      if (currentDay >= 28) {
         finalTotal += 750;
-      } else if (currentDay >= 21) {
+      } else if (currentDay >= 25) {
         finalTotal += 500;
       }
     } else {
