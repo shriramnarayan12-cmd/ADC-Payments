@@ -95,7 +95,7 @@ const BATCH_PAYMENT_MAP: Record<string, typeof ACCOUNT_NR> = {
   "KTK Sun - Sat 7am Maanvi": ACCOUNT_NR,
   "KTK Sun - Sat 8am Maanvi": ACCOUNT_NR,
   "KTK Thu-Fri 8pm Dimple": ACCOUNT_TDR,
-  "KTK Thu-Mon 8pm NR": ACCOUNT_NR,
+  "KTK Wed - Fri 7:30pm NR": ACCOUNT_NR,
   "KTK Tue - Fri 7pm Spurthi": ACCOUNT_NR,
   "KTK Tue - Fri 8pm Spurthi": ACCOUNT_NR,
   "KTK Tue - Wed 5pm Harshitha": ACCOUNT_NR,
