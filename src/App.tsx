@@ -210,12 +210,14 @@ export default function App() {
     if (selectedStudent.payment_frequency === 'Monthly') {
       return [MONTHS[monthIndex]];
     } else {
-      // Quarterly logic mapped by current calendar month
-      if (monthIndex >= 5 && monthIndex <= 7) return ['June/Jul/Aug'];
-      if (monthIndex >= 8 && monthIndex <= 10) return ['Sep/Oct/Nov'];
-      if (monthIndex === 11 || monthIndex === 0 || monthIndex === 1) return ['Dec/Jan/Feb'];
-      if (monthIndex === 2) return ['March'];
-      return [];
+      // Quarterly logic: Only open during the FIRST month of the quarter, plus March
+      if (monthIndex === 5) return ['June/Jul/Aug'];   // June only
+      if (monthIndex === 8) return ['Sep/Oct/Nov'];    // September only
+      if (monthIndex === 11) return ['Dec/Jan/Feb'];   // December only
+      if (monthIndex === 2) return ['March'];          // March only (left as is)
+      
+      // Completely closed for any other month (July, August, October, November, January, February)
+      return []; 
     }
   }, [selectedStudent]);
 
@@ -458,117 +460,129 @@ export default function App() {
                 <option value="">-- Select Period --</option>
                 {availablePeriods.map(p => <option key={p} value={p}>{p}</option>)}
               </select>
+              
+              {/* Dynamic Warning Messages based on Month */}
               {selectedStudent && availablePeriods.length === 0 && (
-                <p className="text-xs text-red-600 mt-1.5 font-medium">School is closed in April and May. No online payments required.</p>
+                (new Date().getMonth() === 3 || new Date().getMonth() === 4) ? (
+                  <p className="text-xs text-red-600 mt-1.5 font-medium">School is closed in April and May. No online payments required.</p>
+                ) : (
+                  <p className="text-xs text-red-600 mt-1.5 font-medium">Quarterly payment window is closed. Please contact faculty.</p>
+                )
               )}
             </div>
-            {/* Amount Due Display */}
-            {feeCalculation.blocked ? (
-              <div className="bg-red-50 rounded-xl p-6 border border-red-200 text-center my-6 shadow-sm">
-                <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
-                <p className="text-base font-bold text-red-800 mb-1">Payment Blocked</p>
-                <p className="text-sm text-red-600 font-medium">{feeCalculation.message}</p>
-              </div>
-            ) : (
-              <div className="bg-blue-50 rounded-xl p-6 border border-blue-100 text-center my-6">
-                <p className="text-sm font-medium text-blue-800 mb-1 uppercase tracking-wider">Amount Due</p>
-                <p className="text-4xl font-bold text-blue-900">
-                  ₹{calculatedAmount.toLocaleString('en-IN')}
-                </p>
-                {selectedStudent && (
-                  <p className="text-xs text-blue-600 mt-2">
-                    Based on {selectedStudent.payment_frequency} frequency
-                  </p>
-                )}
-              </div>
-            )}
 
-            {/* --- PAYMENT SECTION (HIDDEN IF BLOCKED) --- */}
-            {!feeCalculation.blocked && (
+            {/* ONLY SHOW BANKING/SUBMIT SECTIONS IF A PERIOD IS AVAILABLE */}
+            {formData.period && (
               <>
-                {/* DYNAMIC QR CODE & INSTRUCTIONS */}
-                <div className="border border-gray-200 rounded-xl p-6 flex flex-col items-center justify-center bg-white shadow-sm my-6">
-                  <h2 className="text-lg font-bold text-gray-800 mb-4 text-center">Payment Details</h2>
+                {/* Amount Due Display */}
+                {feeCalculation.blocked ? (
+                  <div className="bg-red-50 rounded-xl p-6 border border-red-200 text-center my-6 shadow-sm">
+                    <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
+                    <p className="text-base font-bold text-red-800 mb-1">Payment Blocked</p>
+                    <p className="text-sm text-red-600 font-medium">{feeCalculation.message}</p>
+                  </div>
+                ) : (
+                  <div className="bg-blue-50 rounded-xl p-6 border border-blue-100 text-center my-6">
+                    <p className="text-sm font-medium text-blue-800 mb-1 uppercase tracking-wider">Amount Due</p>
+                    <p className="text-4xl font-bold text-blue-900">
+                      ₹{calculatedAmount.toLocaleString('en-IN')}
+                    </p>
+                    {selectedStudent && (
+                      <p className="text-xs text-blue-600 mt-2">
+                        Based on {selectedStudent.payment_frequency} frequency
+                      </p>
+                    )}
+                  </div>
+                )}
 
-                  {!activeAccount ? (
-                    <div className="bg-blue-50 border border-blue-200 text-blue-800 p-4 rounded-lg w-full text-center text-sm shadow-sm">
-                      Please select a <strong>Batch Name</strong> above to view the correct payment QR code and account details.
-                    </div>
-                  ) : (
-                    <>
-                      <img 
-                        src={activeAccount.qrBase64} 
-                        alt={`${activeAccount.name} QR Code`} 
-                        className="w-48 h-48 object-contain mb-4 border-4 border-gray-50 rounded-lg p-2 bg-white"
-                      />
-                      
-                      <a 
-                        href={activeAccount.qrBase64} 
-                        download={activeAccount.fileName}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg shadow-sm transition-colors mb-6 text-sm text-center w-full max-w-xs"
-                      >
-                        Download QR to Gallery
-                      </a>
+                {/* --- PAYMENT SECTION (HIDDEN IF BLOCKED) --- */}
+                {!feeCalculation.blocked && (
+                  <>
+                    {/* DYNAMIC QR CODE & INSTRUCTIONS */}
+                    <div className="border border-gray-200 rounded-xl p-6 flex flex-col items-center justify-center bg-white shadow-sm my-6">
+                      <h2 className="text-lg font-bold text-gray-800 mb-4 text-center">Payment Details</h2>
 
-                      <div className="bg-blue-50 rounded-lg p-4 w-full border border-blue-100">
-                        <p className="text-sm font-bold text-blue-900 mb-2">How to Pay:</p>
-                        <ol className="text-xs text-blue-800 space-y-1.5 list-decimal list-inside text-left mb-4">
-                          <li>Tap the <strong>Blue button</strong> above to save the QR.</li>
-                          <li>Open <strong>GPay</strong> or <strong>PhonePe</strong>.</li>
-                          <li>Choose <strong>"Scan Any QR"</strong>.</li>
-                          <li>Tap the <strong>Gallery/Image icon</strong> and select the QR you just saved.</li>
-                        </ol>
-                        
-                        <div className="mt-3 p-3 bg-white rounded border border-blue-200 text-left text-xs text-blue-900 space-y-1.5">
-                          <p className="font-bold text-sm mb-1 text-blue-950 border-b border-blue-100 pb-1">Account Details</p>
-                          <p><span className="font-semibold text-gray-600">Name:</span> {activeAccount.name}</p>
-                          <p><span className="font-semibold text-gray-600">Acc Num:</span> {activeAccount.accNum}</p>
-                          <p><span className="font-semibold text-gray-600">IFSC Code:</span> {activeAccount.ifsc}</p>
-                          <p><span className="font-semibold text-gray-600">Type of Account:</span> {activeAccount.type}</p>
-                          <p><span className="font-semibold text-gray-600">UPI Id:</span> {activeAccount.upi}</p>
+                      {!activeAccount ? (
+                        <div className="bg-blue-50 border border-blue-200 text-blue-800 p-4 rounded-lg w-full text-center text-sm shadow-sm">
+                          Please select a <strong>Batch Name</strong> above to view the correct payment QR code and account details.
                         </div>
-                      </div>
-                    </>
-                  )}
-                </div>
+                      ) : (
+                        <>
+                          <img 
+                            src={activeAccount.qrBase64} 
+                            alt={`${activeAccount.name} QR Code`} 
+                            className="w-48 h-48 object-contain mb-4 border-4 border-gray-50 rounded-lg p-2 bg-white"
+                          />
+                          
+                          <a 
+                            href={activeAccount.qrBase64} 
+                            download={activeAccount.fileName}
+                            className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg shadow-sm transition-colors mb-6 text-sm text-center w-full max-w-xs"
+                          >
+                            Download QR to Gallery
+                          </a>
 
-                {/* Transaction ID Input */}
-                <div>
-                  <label htmlFor="txn_id" className="block text-sm font-medium text-gray-700 mb-1">
-                    UPI Transaction ID
-                  </label>
-                  <input
-                    type="text"
-                    id="txn_id"
-                    name="txn_id"
-                    value={formData.txn_id}
-                    onChange={handleInputChange}
-                    placeholder="e.g. 123456789012"
-                    maxLength={12}
-                    minLength={12}
-                    pattern="\d{12}"
-                    title="UPI Transaction ID must be exactly 12 digits"
-                    className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors"
-                    required
-                  />
-                </div>
+                          <div className="bg-blue-50 rounded-lg p-4 w-full border border-blue-100">
+                            <p className="text-sm font-bold text-blue-900 mb-2">How to Pay:</p>
+                            <ol className="text-xs text-blue-800 space-y-1.5 list-decimal list-inside text-left mb-4">
+                              <li>Tap the <strong>Blue button</strong> above to save the QR.</li>
+                              <li>Open <strong>GPay</strong> or <strong>PhonePe</strong>.</li>
+                              <li>Choose <strong>"Scan Any QR"</strong>.</li>
+                              <li>Tap the <strong>Gallery/Image icon</strong> and select the QR you just saved.</li>
+                            </ol>
+                            
+                            <div className="mt-3 p-3 bg-white rounded border border-blue-200 text-left text-xs text-blue-900 space-y-1.5">
+                              <p className="font-bold text-sm mb-1 text-blue-950 border-b border-blue-100 pb-1">Account Details</p>
+                              <p><span className="font-semibold text-gray-600">Name:</span> {activeAccount.name}</p>
+                              <p><span className="font-semibold text-gray-600">Acc Num:</span> {activeAccount.accNum}</p>
+                              <p><span className="font-semibold text-gray-600">IFSC Code:</span> {activeAccount.ifsc}</p>
+                              <p><span className="font-semibold text-gray-600">Type of Account:</span> {activeAccount.type}</p>
+                              <p><span className="font-semibold text-gray-600">UPI Id:</span> {activeAccount.upi}</p>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Transaction ID Input */}
+                    <div>
+                      <label htmlFor="txn_id" className="block text-sm font-medium text-gray-700 mb-1">
+                        UPI Transaction ID
+                      </label>
+                      <input
+                        type="text"
+                        id="txn_id"
+                        name="txn_id"
+                        value={formData.txn_id}
+                        onChange={handleInputChange}
+                        placeholder="e.g. 123456789012"
+                        maxLength={12}
+                        minLength={12}
+                        pattern="\d{12}"
+                        title="UPI Transaction ID must be exactly 12 digits"
+                        className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors"
+                        required
+                      />
+                    </div>
+                  </>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={submitting || !calculatedAmount || feeCalculation.blocked}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed mt-4 flex justify-center items-center"
+                >
+                  {submitting ? (
+                    <>
+                      <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                      Processing...
+                    </>
+                  ) : (
+                    'Submit Payment Details'
+                  )}
+                </button>
               </>
             )}
-
-            <button
-              type="submit"
-              disabled={submitting || !calculatedAmount || feeCalculation.blocked}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed mt-4 flex justify-center items-center"
-            >
-              {submitting ? (
-                <>
-                  <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                  Processing...
-                </>
-              ) : (
-                'Submit Payment Details'
-              )}
-            </button>
           </form>
         </div>
       </div>
