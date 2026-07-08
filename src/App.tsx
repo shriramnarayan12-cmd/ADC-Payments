@@ -547,7 +547,7 @@ export default function App() {
                     {/* Transaction ID Input */}
                     <div>
                       <label htmlFor="txn_id" className="block text-sm font-medium text-gray-700 mb-1">
-                        UPI Transaction ID
+                        NEFT/IMPS : Reference id
                       </label>
                       <label htmlFor="txn_id" className="block text-sm font-medium text-gray-700 mb-1">
                         Gpay : Transaction id
