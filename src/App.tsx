@@ -58,7 +58,7 @@ const ACCOUNT_NR = {
   accNum: "6254 0502 1338",
   ifsc: "ICIC0006254",
   type: "Current",
-  upi: "MRSNIRUPAMARAJENDRA.eazypay@icici"
+  upi: "9448086614.eazypay@icici"
 };
 
 // 2. TDR ACCOUNT DETAILS
@@ -69,7 +69,7 @@ const ACCOUNT_TDR = {
   accNum: "6254 0502 1335",
   ifsc: "ICIC0006254",
   type: "Current",
-  upi: "MRTUMKURDWARAKANATHRAJENDRA.eazypay@icici"
+  upi: "9449316765.eazypay@icici"
 };
 
 // 3. BATCH TO ACCOUNT MAPPING
