@@ -544,16 +544,10 @@ export default function App() {
                       )}
                     </div>
 
-                    {/* Transaction ID Input */}
+                    {/* Transaction ID Input (Smart Box) */}
                     <div>
                       <label htmlFor="txn_id" className="block text-sm font-medium text-gray-700 mb-1">
-                        NEFT/IMPS : Reference id
-                      </label>
-                      <label htmlFor="txn_id" className="block text-sm font-medium text-gray-700 mb-1">
-                        Gpay : Transaction id
-                      </label>
-                      <label htmlFor="txn_id" className="block text-sm font-medium text-gray-700 mb-1">
-                        PhonePe : UTR
+                        NEFT/IMPS Reference ID <span className="text-gray-400 font-normal">|</span> GPay Transaction ID <span className="text-gray-400 font-normal">|</span> PhonePe UTR
                       </label>
                       <input
                         type="text"
@@ -561,14 +555,23 @@ export default function App() {
                         name="txn_id"
                         value={formData.txn_id}
                         onChange={handleInputChange}
-                        placeholder="e.g. 123456789012"
-                        maxLength={12}
-                        minLength={12}
-                        pattern="\d{12}"
-                        title="UPI Transaction ID must be exactly 12 digits"
-                        className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors"
+                        placeholder="e.g. 123456789012 or SBIN123456"
+                        maxLength={/^\d*$/.test(formData.txn_id) ? 12 : 22}
+                        minLength={/^\d*$/.test(formData.txn_id) ? 12 : 6}
+                        pattern={/^\d*$/.test(formData.txn_id) ? "\\d{12}" : "[a-zA-Z0-9]{6,22}"}
+                        title={/^\d*$/.test(formData.txn_id) ? "UPI must be exactly 12 digits" : "Bank Reference must be 6 to 22 characters (letters and numbers only)"}
+                        className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors uppercase"
                         required
                       />
+                      
+                      {/* Dynamic Helper Text */}
+                      {formData.txn_id && (
+                        <p className={`text-xs mt-1.5 font-medium ${/^\d*$/.test(formData.txn_id) ? (formData.txn_id.length === 12 ? 'text-green-600' : 'text-amber-600') : 'text-green-600'}`}>
+                          {/^\d*$/.test(formData.txn_id) 
+                            ? (formData.txn_id.length === 12 ? "✓ 12-Digit UPI ID detected." : `UPI ID: ${formData.txn_id.length}/12 digits entered.`) 
+                            : "✓ Bank Reference Number detected."}
+                        </p>
+                      )}
                     </div>
                   </>
                 )}
