@@ -237,7 +237,10 @@ export default function App() {
   const feeCalculation = useMemo(() => {
     if (!formData.batch_name || !selectedStudent || !formData.period) return { amount: 0, blocked: false, message: '' };
     
-    const baseFee = batchFees[formData.batch_name] || 0;
+    // Override base fee to 2000 for KTK0861, otherwise use normal batch fee
+    const baseFee = selectedStudent.reg_no === 'KTK0861' 
+      ? 2000 
+      : (batchFees[formData.batch_name] || 0);
     
     let multiplier = 1; 
     if (selectedStudent.payment_frequency === 'Quarterly') {
